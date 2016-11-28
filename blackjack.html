@@ -1,0 +1,705 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Blackjack Emporium</title>
+<link rel="stylesheet" type="text/css" href="styles/theme2.css">
+<link href="https://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'">
+
+<script language="javascript" type="text/javascript">
+
+/*Set periods of times of the day*/
+var goodDay = new Date();
+	
+	if (goodDay.getHours() < 6)
+	{
+	goodDay = "night";
+	}
+
+	else if (goodDay.getHours() < 12)
+	{
+	goodDay = "morning";
+	}
+	
+	else if (goodDay.getHours() < 18)
+	{
+	goodDay = "afternoon";
+	}
+	
+	else if (goodDay.getHours() < 24)
+	{
+	goodDay = "evening";
+	}
+
+/*Change "Good day" in the welcome message to the time of day it is*/
+function time()
+{
+	document.getElementById("Welcome").innerHTML = "Good " + goodDay + " and welcome to the blackjack emporium user!"; 
+
+}
+
+/*Change "Welcome User!" and "User's score" to the user's name*/
+function welcomeUser()
+{
+	document.getElementById("Welcome").innerHTML = "Good " + goodDay + " and welcome to the blackjack emporium " + (userName).value + "!"; 
+  
+  	document.getElementById("userNameHolder").innerHTML = (userName).value + "'s score"; 
+ }
+ 
+/*Check User is over 18. Alert appropriate message*/
+function ageCheck(userAge)
+{
+	if (userAge<18)
+	{
+		alert("Don't make the same mistakes I did kid. Life isn't all Blackjack and Mystic Meg. Scram!");
+	}
+	
+	else
+	{
+		alert("Welcome to Blackjack and Mystic Meg my friend! This is what life is all about!");
+		}
+}
+
+/*Switch background colour to colour associated with star signs*/
+
+function backgroundChange()
+{
+	if (document.getElementById("starSign").value == "aries" )
+ 	{ 
+	document.body.style.backgroundColor = "#ff99c2"; 
+	}
+	
+	else if (document.getElementById("starSign").value == "taurus" )
+ 	{ 
+	document.body.style.backgroundColor = "#99ffd6"; 
+	}
+	
+	else if (document.getElementById("starSign").value == "gemini" )
+ 	{ 
+	document.body.style.backgroundColor = "#ffc199"; 
+	}
+	
+	else if (document.getElementById("starSign").value == "cancer" )
+ 	{ 
+	document.body.style.backgroundColor = "#ffccff"; 
+	}
+	
+	else if (document.getElementById("starSign").value == "leo" )
+ 	{ 
+	document.body.style.backgroundColor = "#ffcc99"; 
+	}
+	
+	else if (document.getElementById("starSign").value == "virgo" )
+ 	{ 
+	document.body.style.backgroundColor = "#ccccff"; 
+	}
+	
+	else if (document.getElementById("starSign").value == "libra" )
+ 	{ 
+	document.body.style.backgroundColor = "#b3ffe1"; 
+	}
+	
+	else if (document.getElementById("starSign").value == "scorpio" )
+ 	{ 
+	document.body.style.backgroundColor = "#ffc4b3"; 
+	}
+	
+	else if (document.getElementById("starSign").value == "sagittarius" )
+ 	{ 
+	document.body.style.backgroundColor = "#ffb3eb"; 
+	}
+
+	else if (document.getElementById("starSign").value == "capricorn" )
+ 	{ 
+	document.body.style.backgroundColor = "#ff9999"; 
+	}
+	
+	else if (document.getElementById("starSign").value == "aquarius" )
+ 	{ 
+	document.body.style.backgroundColor = "#b3ccff"; 
+	}
+	
+	else if (document.getElementById("starSign").value == "pices" )
+ 	{ 
+	document.body.style.backgroundColor = "#ffcce6"; 
+	}
+		
+}
+
+/*Attempted switch method rather than if/else for background change
+
+switch(document.getElementById("starSign").value) {
+    case 'aries':
+    document.body.style.backgroundColor = "blue";
+	break;
+    case "taurus":
+    document.body.style.backgroundColor = "red";
+	break;
+    default:
+    document.body.style.backgroundColor = "green";  
+
+*/
+
+/*If checkbox is unticked, Meg image is replaced. Her predictions are hidden and a different piece of text appears instructing the user to click here to play.*/ 
+
+/*REFERENCE. Method for revealing visibility from stackoverflow. Available here:
+http://stackoverflow.com/questions/15318357/show-hide-image-with-javascript*/
+function dontPredict()
+{
+document.images[0].src = "http://cdn.meme.am/instances/500x/58569024.jpg";
+document.getElementById("notPrediction").style.visibility = "visible";
+document.getElementById("prediction").style.visibility = "hidden";
+}
+
+/*Mystic Meg's prediction*/  
+
+/*Array of predictions. */
+var megSays = ["Yuck! I've taken a peep at your future and witnessed one of the most disgusting blackjack performances I've ever seen. Get the hell off my website your hideous, hideous user", "You're doomed. MEG HAS SPOKEN", "You have no chance of winning. Weep into your cards you pathetic person.", "Your soul does not compute with virtual blackjack. You will lose.", "I've predicted a lot of things in my time but your future is the gloomiest. Certain defeat.", "The future is foggy with the fog of your imminent defeat", "Great Scott! You're going to win!", "You're bound to win, no need to bother playing", "You'll win, good for you hotshot!", "Stake your house on it, you're sure to win", "Are there jaffa cakes at hand? Eat one! Because you my friend are a guaranteed winner.", "As sure as this prediction is a randomly generated piece of text, you will win", "You cannot be defeated...but you do not have a winners soul. Draw", "It'll be a tie, says I"];
+
+function megPredicts()
+{
+var megDecides = megSays[Math.floor(Math.random() * megSays.length)];
+
+/*
+REFERENCE:
+Method for chosing randomly from an Array from stackoverflow - http://stackoverflow.com/questions/4550505/getting-random-value-from-an-array
+*/
+document.getElementById("prediction").innerHTML = "<p>" + "Your star sign is " + (document.getElementById("starSign").value) + ", Meg says '" + megDecides + "'" + "</p>"; 
+}
+
+/*When blackjack is played through, check Meg's prediction against the result.
+The first six strings in the megSays array predict a user win and the second six to predict a computer win. The last two predict a draw
+*/
+
+
+/*BLACKJACK GAME.*/
+/*Based on game made in codecademy. Full reference after game at bottom of script*/
+
+
+/*deal function gets number between 1 & 52*/
+function deal() 
+{
+  	card = Math.floor(Math.random()*52 + 1);
+  	return card;
+}
+
+/*Set numbers to their corresponding cards and assign values*/
+
+/*The cards are set as such
+Aces: 1 (ace) 2-10 (2-10) 11-13 (jack, king, queen)
+Spades: 14 (ace) 15-23 (2-10) 24-26 (jack, king, queen)
+Hearts: 27 (ace) 28-36 (2-10) 37-39 (jack, king, queen)
+Diamonds: 40 (ace) 41-49 (2-10) 50-52 (jack, king, queen)
+*/
+
+/*
+Card values
+
+1-10: Face value
+Jack, Queen, King: 10
+Aces: 11
+*/
+
+function cardValue(card) 
+{
+  	/*Set cards and values*/
+    /*Aces*/
+	if (card == 1 || card == 14 || card == 27 || card == 40)
+		{
+		
+		return 11
+								/*Aces should be wild but I have them set to 11. This is an attempt to give 								the user the option to choose between Aces high or low. The problem is it 													
+								pops up before the user can actually see thier cards*/		
+								/*
+								
+									if (confirm ("Click ok to make Aces high for a score of 11 or cancel to 	
+									make them low for a score of 1"))		
+			
+									{
+									return 11
+									}
+		
+									else
+									{
+									return 1
+									}
+								
+										REFERENCE:
+										Confirm method from stackoverflow. Available here:
+										http://stackoverflow.com/questions/9334636/javascript-yes-no-alert
+								*/
+		
+		}
+	 
+	
+	 	/*Face cards*/
+	 		else if (card >= 11 && card <= 13 || card >= 24 && card <= 26 || card >= 37 && card <= 39 || card >= 50 && card <= 52) 
+  			{
+     		return 10;
+   			}	
+		
+			/*Numbers*/
+			else 
+			{
+			return card % 13 
+			}
+
+}	
+
+/*variables to hold user cards and computer cards*/
+var userCard1 = deal();
+var userCard2 = deal();	
+var userCard3 = deal();
+
+var computerCard1 = deal();
+var computerCard2 = deal();
+var computerCard3 = deal();
+
+/*Cards with values assigned*/
+var firstUserCard = cardValue(userCard1);
+var secondUserCard = cardValue(userCard2);
+var thirdUserCard = cardValue(userCard3);
+
+var firstComputerCard = cardValue(computerCard1);
+var secondComputerCard = cardValue(computerCard2);
+var thirdComputerCard = cardValue(computerCard3);
+
+
+/*Deal the first cards. Two for user, one for computer*/
+function firstDeal()
+{
+	/*Local variable for first round total score*/
+	var totalUserScore = firstUserCard + secondUserCard;
+
+				/*Give score in text under cards*/
+				/*User text*/
+				document.getElementById("userCards").innerHTML = "You scored " + firstUserCard + " and " + secondUserCard + " for a total score of " + totalUserScore + "!";
+
+				/*Computer text*/		
+				document.getElementById("computerCards").innerHTML = "Computer scored " + firstComputerCard + " for a total score of " + firstComputerCard + "!";
+
+										/*Insert card images*/
+										/*User card images*/
+										document.images[4].src = "images/" + userCard1 + ".gif"; 
+										document.images[5].src = "images/" + userCard2 + ".gif"; 
+										
+										/*Computer card images*/
+										document.images[7].src = "images/" + computerCard1 + ".gif"; 
+	 									
+										/*Remember [] nos refer to position of image on page*/
+						
+				/*User wins if they get 21 on the first deal*/
+				if (totalUserScore == 21)
+				{
+				document.getElementById("result").innerHTML = "<p>" + "Blackjack! You win!" + "</p>";
+				}
+				
+				/*Reveal options for 'hit me' and 'stand'*/
+				/*REFERENCE. Method for revealing visibility from stackoverflow. Available here:
+				http://stackoverflow.com/questions/15318357/show-hide-image-with-javascript*/
+				else
+				{
+				document.getElementById("hitMe").style.visibility = "visible";
+				document.getElementById("stand").style.visibility = "visible";
+				}
+}
+
+
+/*Hit me*/
+function hitMe()
+{
+	/*Local variables for total scores after second round. One for user, one for if computer decideds to hit and one for if computer decides to stand*/
+	var userTotalScore = firstUserCard + secondUserCard + thirdUserCard;
+	var computerTotalScore = firstComputerCard + secondComputerCard + thirdComputerCard;
+		
+		/*Total user score after round 2*/
+		document.getElementById("userCards").innerHTML = "You scored " + thirdUserCard + " for a total score of " + userTotalScore + "!";
+		
+			/*Third user card image*/
+			document.images[6].src = "images/" + thirdUserCard + ".gif";	
+			
+	/*If the computer has a total score of 12 or under after if gets its second card it hits. If not, it stands*/	
+
+		if (computerTotalScore <= 12)
+		{		
+		document.getElementById("computerCards").innerHTML = "Computer scored " + secondComputerCard + " and decided to hit, scoring " + thirdComputerCard + " for a total score of " + computerTotalScore + "!";
+
+			/*Computer hits card image*/
+			document.images[8].src = "images/" + secondComputerCard + ".gif";
+			document.images[9].src = "images/" + thirdComputerCard + ".gif";	
+		
+			var finalComputerScore = computerTotalScore;
+		
+		
+		}
+
+		else 
+		{		
+		document.getElementById("computerCards").innerHTML = "Computer scored " + secondComputerCard + " and decided to stand, for a total score of " + (computerTotalScore - thirdComputerCard) + "!";
+
+			/*Computer hits card image*/
+			document.images[8].src = "images/" + secondComputerCard + ".gif";
+		
+			var finalComputerScore = computerTotalScore - thirdComputerCard;
+		}
+
+/*Compare scores*/
+	
+	/*User win*/
+	if (userTotalScore <= 21 && userTotalScore > finalComputerScore && finalComputerScore <= 21)
+	{
+		document.getElementById("result").innerHTML = "<p>" + "You win!" + "</p>";
+		}
+	
+	/*Computer win*/
+	else if (userTotalScore <= 21 && userTotalScore < finalComputerScore && finalComputerScore <= 21)
+	{
+		document.getElementById("result").innerHTML = "<p>" + "Computer wins!" + "</p>";
+		}
+	
+	/*Draw*/
+	else if (userTotalScore <= 21 && userTotalScore == finalComputerScore && finalComputerScore <= 21)
+	{
+		document.getElementById("result").innerHTML ="<p>" + "It's a draw!" + "</p>";
+		}
+	/*User bust*/
+	else if (userTotalScore > 21 && finalComputerScore <= 21)
+	{
+		document.getElementById("result").innerHTML ="<p>" + "You bust! Computer wins!" + "</p>";
+		}
+	
+	/*Computer bust*/
+	else if (userTotalScore <= 21 && finalComputerScore > 21)
+	{
+		document.getElementById("result").innerHTML ="<p>" + "Computer bust! You win!" + "</p>";
+		}
+	
+	/*User and computer bust*/	
+	else if (userTotalScore > 21 && finalComputerScore > 21)
+	{
+		document.getElementById("result").innerHTML ="<p>" + "You both bust! It's a draw!" + "</p>";
+		}
+				
+		/*Take away stand option*/
+		document.getElementById("stand").style.visibility = "hidden";
+
+}
+
+
+function stand()
+{
+	/*New local variable for user total score. Copies of the same variables from hitMe for the computers move*/
+	var userTotalScore =  firstUserCard + secondUserCard;
+	
+	var computerTotalScore = firstComputerCard + secondComputerCard + thirdComputerCard;
+	
+	/*Total user score after round 2*/
+		document.getElementById("userCards").innerHTML = "You stand, for a total score of " + userTotalScore + "!";
+	
+	
+	/*Same code as in hitMe function for computer*/	
+	if (computerTotalScore <= 12)
+	{		
+		document.getElementById("computerCards").innerHTML = "Computer scored " + secondComputerCard + " and decided to hit, scoring " + thirdComputerCard + " for a total score of " + computerTotalScore + "!";
+
+			/*Computer hits card image*/
+			document.images[8].src = "images/" + secondComputerCard + ".gif";
+			document.images[9].src = "images/" + thirdComputerCard + ".gif";	
+	
+			var finalComputerScore = computerTotalScore;
+	}
+
+	else 
+	{		
+		document.getElementById("computerCards").innerHTML = "Computer scored " + secondComputerCard + " and decided to stand, for a total score of " + (computerTotalScore - thirdComputerCard) + "!";
+
+			/*Computer hits card image*/
+			document.images[8].src = "images/" + secondComputerCard + ".gif";
+			
+			var finalComputerScore = computerTotalScore - thirdComputerCard;	
+	}
+
+	
+/*Compare scores. Same code as hitMe function. I'm repeating so there has to be a better way but when I make a function compareScores and take it out of the hitMe and stand functions and call it it doesn't work.Could it be because finalComputerScore is a local variable?*/
+	
+	/*User win*/
+	if (userTotalScore < 21 && userTotalScore > finalComputerScore && finalComputerScore < 21)
+	{
+		document.getElementById("result").innerHTML = "<p>" + "You win!" + "</p>";
+		}
+	
+	/*Computer win*/
+	else if (userTotalScore <= 21 && userTotalScore < finalComputerScore && finalComputerScore <= 21)
+	{
+		document.getElementById("result").innerHTML = "<p>" + "Computer wins!" + "</p>";
+		}
+	
+	/*Draw*/
+	else if (userTotalScore <= 21 && userTotalScore == finalComputerScore && finalComputerScore <= 21)
+	{
+		document.getElementById("result").innerHTML ="<p>" + "It's a draw!" + "</p>";
+		}
+	/*User bust*/
+	else if (userTotalScore > 21 && finalComputerScore <= 21)
+	{
+		document.getElementById("result").innerHTML ="<p>" + "You bust! Computer wins!" + "</p>";
+		}
+	
+	/*Computer bust*/
+	else if (userTotalScore <= 21 && finalComputerScore > 21)
+	{
+		document.getElementById("result").innerHTML ="<p>" + "Computer bust! You win!" + "</p>";
+		}
+	
+	/*Both User and Computer bust*/	
+	else if (userTotalScore > 21 && finalComputerScore > 21)
+	{
+		document.getElementById("result").innerHTML ="<p>" + "You both bust! It's a draw!" + "</p>";
+		}
+
+/*Take away hit me options*/
+document.getElementById("hitMe").style.visibility = "hidden";
+
+}
+
+/* I attempted to check the outcome of the game against Meg's prediction using a few different methods but they didn't correspond consistently. She would always be right or always be wrong. She might not be as psychic as she thinks.
+
+Here's one way(check prediction within outcome if/elses):
+User win when Meg predicts user lose or draw, then User win when Meg predicts user win
+	
+	if (userTotalScore < 21 && userTotalScore > finalComputerScore && finalComputerScore < 21 && (megSays[1] ||megSays[2] ||megSays[3] ||megSays[4] ||megSays[5] ||megSays[6] || megSays[13] ||megSays[14]))
+	{
+		document.getElementById("result").innerHTML = "<p>" + "You win! Meg got it wrong and hangs up her crystal ball" + "</p>";
+		}
+	
+	
+	else if (userTotalScore < 21 && userTotalScore > finalComputerScore && finalComputerScore < 21 && (megSays[7] || megSays[8] ||megSays[8] ||megSays[10] ||megSays[11] ||megSays[12]))
+	{
+		document.getElementById("result").innerHTML = "<p>" + "You win! Just as Meg predicted..." + "</p>";
+		}
+
+OR?
+
+Loop the array and use them to assign values to a variable "megsVerdict" 
+for (var i = 0; i < 7; i++) 
+{
+    var megsVerdict = "win";
+}
+
+for (var i = 7; i < 13; i++) 
+{
+    var megsVerdict = "lose";
+}
+
+for (var i = 13; i < 15; i++) 
+{
+    var megsVerdict = "draw";
+}
+
+Then create variables denoting the outcome in the outcome if/else statements and compare the values.
+(also tried removing the draw option and just going with boolean values for she got it right/she got it wrong)
+*/
+
+
+/*
+REFERENCE:
+Before making this blackjack game I completed codecademy's blackjack game builder(part1). Some of the concepts used in my game are from codecademy.
+
+Codecademy gets you you to build the game with the help of guides. When I was finished I was left with the following block of code, from which I developed my own blackjack game.
+
+https://www.codecademy.com/courses/blackjack-part-1/0/1
+
+	Our deal function will return a random card
+	var deal = function() {
+  	card = Math.floor(Math.random()*52+1);
+  	return card;
+	};
+
+		// Deal out our first hand
+		var card1 = deal();
+		var card2 = deal();
+
+				// This function takes a card as a parameter and returns the value
+				// of that card
+				var getValue = function(card) {
+  				// if its a face card, number should be set to 10 
+  				if(card >= 10 || card == 0) {
+        		return 10;
+    			}
+
+					What if it's an ace?
+    				else if (card == 1)
+    				{
+        			return 11;
+        			}
+
+  						// Otherwise, we just want its number value
+						else {
+        				return card % 13;
+   						 }
+}
+        
+								// Score the hand
+								function score() {
+  								return getValue(card1) + getValue(card2);
+								}
+
+									console.log("You have cards " + card1 + " and " + card2 +
+        							" for a score of " + score(card1, card2));
+
+
+*/
+</script>
+
+</head>
+<!--When the page loads "Good day" in the welcome message is set to the time of day-->
+<body onload="time();">
+
+<!--Welcome user. "User" to be replaced by user's name-->
+<p>
+<div id = "Welcome">
+Good day and welcome to the blackjack emporium user!
+</div>
+</p>
+
+<!--FORMS-->
+<!--Form type 1 - Textbox-->
+<form id="userInfo" action="#">
+	
+    <!--Name-->
+    <p>
+	Enter your first name:
+	<input type="text" name="userName" id="userName" value="" size="25"
+	maxlength="25" onBlur="welcomeUser(this.value);">
+	</p>
+		
+        <!--Age-->
+        <p>
+		Enter your age:
+		<input type="number" min="0" max="150" name="userAge" id="userAge" value="" size="25"
+		maxlength="3" onBlur="ageCheck(this.value);"/>
+		</p>
+</form>
+
+<!--Form type 2 - Checkbox-->
+<form id="dontPredict" action="#">
+<p>
+<input type="checkbox" name="mysticMeg" value="yes"
+checked="checked" onChange="dontPredict();"/>
+I would like Mystic Meg to predict the outcome of this game. 
+</p> 
+</form>
+
+<!--Form type 3 - Select form-->
+<form id="chooseSign" action="#">
+<p>
+ What is your star sign?
+ <select id ="starSign" name="starSign" onChange="backgroundChange(); megPredicts()">
+ <option value="pleaseSelect">Please Select</option>
+ <option value="aries">Aries</option>
+ <option value="taurus">Taurus</option>
+ <option value="gemini">Gemini</option>
+ <option value="cancer">Cancer</option>
+ <option value="leo">Leo</option>
+ <option value="virgo">Virgo</option>
+ <option value="libra">Libra</option>
+ <option value="scorpio">Scorpio</option>
+ <option value="sagittarius">Sagittarius</option>
+ <option value="capricorn">Capricorn</option>
+ <option value="aquarius">Aquarius</option>
+ <option value="pices">Pices</option>
+</select>
+</p>
+</form>
+
+<!-- Images-->
+<div id="3pics">
+	
+    <!--Meg, Meg is consulting-->
+    	<div id = "picHolder1">
+    	<img id = "pic1" alt="meg" src="http://img.thesun.co.uk/aidemitlum/archive/00953/SNF2306A-280_953519a.jpg" title="Mystic Meg"  width="150" height="150"/>
+    	<div id = "prediction">
+        <p>Meg is consulting her crystal ball. Click 'play now' to deal the cards!</p>
+		</div>
+        <div id = "notPrediction">
+        <p>Meg has gone home. You really hurt her feelings. Click 'play now' to deal the cards!</p>
+        </div>
+        <div id = "house rules">
+        <p>HOUSE RULES</p> 
+        <p>You will be dealt a maximum of three cards. Aces are high.</p>
+        
+        </div>
+<!--Buttons-->   
+   	<div id = "buttons">
+            
+            <!--Play now-->
+            <div id = "playNow">
+    		<img id = "playnow" alt="play now" src="images/playNow.png" title="Play Now"  onClick="firstDeal();" width=	"140" height="60"/>
+			</div>
+   	 				
+                    <!--Hit me.-->  
+   						<div id = "hitMe">
+   						<img id = "Hit me" alt="hit me" src="images/hitMe.png" title="Hit me" onClick="hitMe();" width="140" height="60"/>
+                    	</div>
+                   				<!--Stand.--> 
+                    			<div id = "stand" width="140" height="60">
+                    			<img id = "Stand" alt="stand" src="images/stand.png" title="Stand" onClick="stand();" width="140" height="60"/>
+                   				</div>
+	
+    </div>
+  
+  <!--User info-->
+  <div id = "picHolder2">
+    
+     <!--User's cards images-->
+     <img id = "card1" alt="user card 1" src="images/back.gif" title="User's First Card"  width="80" height="100"/>
+     <img id = "card2" alt="user card 2" src="images/back.gif" title="User's Second Card"  width="80" height="100"/>
+     <img id = "card3" alt="user card 3" src="images/back.gif" title="User's Third Card"  width="80" height="100"/>
+     
+     	<!--User's Score. Changes to "Name user enters in textfield's score"-->
+    	<div id = "userNameHolder">
+     	<p>
+     	User's Score
+     	</p>
+     	</div>
+     	
+        	<!--User's Score. Updates when users cards are revealed-->
+        	<div id = "userCards">
+     		<p>
+     		<!--SOME TEXT MAYBE?-->
+     		</p>
+     		</div>
+     </div>
+    
+   <!--Computer-->
+    <div id = "picHolder3">
+	
+    	<!--Computer's cards images-->
+    	<img id = "card4" src="images/back.gif" alt="computer card 1" title="Computer's First Card"  width="80" height="100"/>
+    <img id = "card5" src="images/back.gif" alt ="computer card 2" title="Computer's Second Card"  width="80" height="100"/>
+    	<img id = "card6" src="images/back.gif" alt="computer card 3" title="Computer's Third Card"  width="80" height="100"/>
+    	
+        	<!--Computer's score-->
+            <div id = "computerNameHolder">
+        	<p>
+        	Computer's Score
+        	</p>
+        	</div>
+     
+     			<!--Computer's score-->
+                <div id = "computerCards">
+     			
+   				</div>
+    			</div>
+
+	</div>
+					<!--And the winner is...-->
+                    <div id = "result">
+        			</div>
+							
+                            <div id = "wasMegRight">
+                            </div>
+</div>
+
+</body>
+</html>
